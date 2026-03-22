@@ -10,14 +10,14 @@
   <title>Đăng nhập — Quản Lý Thiết Bị</title>
 
   
-  <!-- 🔥 SỬA ĐƯỜNG DẪN CSS -->
+
   <link rel="stylesheet" href="{{ asset('css/style_login.css') }}">
   
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚄</text></svg>">
 </head>
 <body>
 
-  <!-- 🔥 GIỮ NGUYÊN PHẦN HTML & CSS -->
+
   <div class="scene" aria-hidden="true">
     <svg class="road" viewBox="0 0 1600 520" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg">
       <defs>
@@ -44,16 +44,16 @@
       </div>
     </div>
 
-    <!-- 🔥 HIỂN THỊ LỖI -->
+
     @if(!empty($error))
     <div class="error-message">
       {{ $error }}
     </div>
     @endif
 
-    <!-- 🔥 SỬA FORM ACTION -->
+  
     <form id="loginForm" method="POST" action="{{ route('login.submit') }}" autocomplete="on">
-      @csrf <!-- 🔥 QUAN TRỌNG: Laravel CSRF protection -->
+      @csrf 
       
       <div>
         <label for="email">Email</label>
@@ -91,7 +91,7 @@
     </form>
   </main>
 
-  <!-- 🔥 GIỮ NGUYÊN JAVASCRIPT -->
+
   <script>
     const togglePassword = document.getElementById('togglePassword');
     const passwordInput = document.getElementById('password');

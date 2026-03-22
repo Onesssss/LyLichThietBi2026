@@ -1,7 +1,7 @@
 @include('partials.header')
 @include('partials.sidebar')
 
-<!-- Main Content -->
+
 <main class="main-content">
     <div class="top-bar">
         <div class="page-title">
@@ -12,14 +12,14 @@
         </div>
     </div>
 
-    <!-- Nút thêm mới -->
+   
     <div style="margin-bottom: 20px; text-align: right;">
         <a href="{{ route('branches.create') }}" class="btn-add" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
             <i class="fas fa-plus-circle"></i> Thêm xí nghiệp mới
         </a>
     </div>
 
-    <!-- Thông báo -->
+    
     @if(session('success'))
     <div class="alert alert-success" style="background: #d4edda; color: #155724; padding: 12px 20px; border-radius: 8px; margin-bottom: 20px;">
         <i class="fas fa-check-circle"></i> {{ session('success') }}
@@ -32,7 +32,7 @@
     </div>
     @endif
 
-    <!-- Bảng danh sách xí nghiệp -->
+   
     <div class="info-note" style="margin-bottom: 20px;">
         <i class="fas fa-database"></i>
         <span><strong>Danh sách xí nghiệp:</strong> Quản lý các xí nghiệp trong hệ thống.</span>

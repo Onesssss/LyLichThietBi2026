@@ -1,7 +1,7 @@
 @include('partials.header')
 @include('partials.sidebar')
 
-        <!-- Main Content -->
+
         <main class="main-content">
             <div class="top-bar">
                 <div class="page-title">
@@ -12,13 +12,13 @@
                 </div>
             </div>
 
-            <!-- Phạm vi dữ liệu -->
+     
             <div class="info-note">
                 <i class="fas fa-database"></i>
                 <span><strong>Phạm vi dữ liệu:</strong> Toàn hệ thống. Dashboard lấy dữ liệu từ bộ nhớ FE hiện tại nên khi thêm tài sản ở danh sách, số liệu sẽ cập nhật theo.</span>
             </div>
 
-            <!-- 4 thẻ chính -->
+   
             <div class="stats-grid" id="statsGrid">
                 <div class="stat-card">
                     <div class="stat-title"><i class="fas fa-list-ul"></i> Bảng ghi tài sản</div>
