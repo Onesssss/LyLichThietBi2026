@@ -135,6 +135,38 @@
     }
     updateDateTime();
     setInterval(updateDateTime, 60000);
+
+          // ==================== RESPONSIVE SIDEBAR ====================
+        const sidebar = document.getElementById('sidebar');
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        
+        function closeSidebar() {
+            sidebar.classList.remove('open');
+            sidebarOverlay.classList.remove('active');
+        }
+        
+        function openSidebar() {
+            sidebar.classList.add('open');
+            sidebarOverlay.classList.add('active');
+        }
+        
+        if (sidebarToggle) {
+            sidebarToggle.addEventListener('click', openSidebar);
+        }
+        
+        if (sidebarOverlay) {
+            sidebarOverlay.addEventListener('click', closeSidebar);
+        }
+        
+        // Đóng sidebar khi click vào nav-item trên mobile
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', () => {
+                if (window.innerWidth <= 768) {
+                    closeSidebar();
+                }
+            });
+        });
 </script>
 </body>
 </html>

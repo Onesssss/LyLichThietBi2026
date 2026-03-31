@@ -3,26 +3,40 @@
 namespace App\Http\Controllers;
 
 use App\Models\Branch;
+use App\Helpers\PermissionHelper;
 use Illuminate\Http\Request;
 
 class BranchController extends Controller
 {
     // Hiển thị danh sách
     public function index()
-    {
-        $branches = Branch::orderBy('id', 'desc')->get();
-        return view('branches.index', compact('branches'));
-    }
+        {
+            // Kiểm tra quyền
+            if (!PermissionHelper::canManageBranches()) {
+                abort(403, 'Bạn không có quyền truy cập');
+            }
+            
+            $query = Branch::query();
+            $query = PermissionHelper::filterBranch($query);
+            $branches = $query->orderBy('id', 'desc')->get();
+            
+            return view('branches.index', compact('branches'));
+        }
 
     // Hiển thị form thêm
     public function create()
     {
+        if (!PermissionHelper::canManageBranches()) {
+            abort(403, 'Bạn không có quyền thêm mới');
+        }
         return view('branches.create');
     }
-
     // Lưu mới
     public function store(Request $request)
     {
+        if (!PermissionHelper::canManageBranches()) {
+            abort(403, 'Bạn không có quyền thêm mới');
+        }
         $request->validate([
             'name' => 'required|string|max:100|unique:branches,name'
         ], [
@@ -39,13 +53,33 @@ class BranchController extends Controller
     // Hiển thị form sửa
     public function edit($id)
     {
+        if (!PermissionHelper::canManageBranches()) {
+            abort(403, 'Bạn không có quyền sửa');
+        }
+        
         $branch = Branch::findOrFail($id);
+        
+        // User chỉ được sửa branch của mình
+        if (PermissionHelper::isUser() && $branch->id != PermissionHelper::getBranchId()) {
+            abort(403, 'Bạn không có quyền sửa xí nghiệp này');
+        }
+        
         return view('branches.edit', compact('branch'));
     }
 
     // Cập nhật
     public function update(Request $request, $id)
     {
+        if (!PermissionHelper::canManageBranches()) {
+            abort(403, 'Bạn không có quyền sửa');
+        }
+        
+        $branch = Branch::findOrFail($id);
+        
+        if (PermissionHelper::isUser() && $branch->id != PermissionHelper::getBranchId()) {
+            abort(403, 'Bạn không có quyền sửa xí nghiệp này');
+        }
+
         $branch = Branch::findOrFail($id);
 
         $request->validate([
@@ -64,6 +98,9 @@ class BranchController extends Controller
     // Xóa
     public function destroy($id)
     {
+        if (!PermissionHelper::isAdmin()) {
+            abort(403, 'Chỉ Admin mới có quyền xóa');
+        }
         $branch = Branch::findOrFail($id);
         $branch->delete();
 

@@ -6,6 +6,10 @@ use App\Http\Controllers\BranchController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ForgotPasswordController;
+use App\Http\Controllers\EquipmentListController;
+use App\Http\Controllers\EquipmentCategoryController;
+use App\Http\Controllers\EquipmentItemController;
+use App\Http\Controllers\PointController;
 use Illuminate\Support\Facades\Route;
 
 // Authentication Routes
@@ -28,7 +32,10 @@ Route::prefix('admin')->group(function () {
 Route::get('/trang-chu', [HomeController::class, 'index'])->name('home');
 Route::resource('branches', BranchController::class);
 Route::resource('departments', DepartmentController::class);
-
+Route::resource('equipment-lists', EquipmentListController::class);
+Route::resource('equipment-categories', EquipmentCategoryController::class);
+Route::resource('equipment-items', EquipmentItemController::class);
+Route::resource('points', PointController::class);
 
 // Tạo tài khoản
 Route::resource('admins', AdminController::class);

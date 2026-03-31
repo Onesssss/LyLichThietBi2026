@@ -12,8 +12,8 @@ class Admin extends Authenticatable
     public $timestamps = false;
     
     protected $fillable = [
-        'username', 'password', 'email', 'full_name', 'role_id', 
-        'branch_id', 'dept_id', 'status'
+     'username', 'password', 'email', 'full_name', 
+        'role_id', 'branch_id', 'dept_id', 'status'
     ];
         protected $dates = ['last_login'];
     
@@ -28,4 +28,6 @@ class Admin extends Authenticatable
     {
         return $this->belongsTo(Department::class, 'dept_id');
     }
+
+ 
 }

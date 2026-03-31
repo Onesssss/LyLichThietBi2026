@@ -12,4 +12,9 @@ class Branch extends Model
     {
         return $this->hasMany(Department::class);
     }
+    // Quan hệ: Có nhiều Point
+    public function points()
+    {
+        return $this->hasMany(Point::class, 'branch_id');
+    }
 }

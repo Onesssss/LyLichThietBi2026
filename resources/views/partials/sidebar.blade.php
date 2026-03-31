@@ -23,6 +23,11 @@
                 <i class="fas fa-building"></i> <span>Cung/Trạm</span>
             </a>
         </div>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('points.index') }}">
+                <i class="fas fa-map-marker-alt"></i> <span>Chốt</span>
+            </a>
+        </li>
         <div class="nav-item" data-page="admin">
             <a href="{{ route('admins.index') }}" style="color: inherit; text-decoration: none; display: flex; align-items: center; gap: 12px;">
                 <i class="fas fa-building"></i> <span>Người dùng</span>
@@ -44,6 +49,21 @@
         <div class="nav-item" data-page="notification">
             <i class="fas fa-bell"></i> <span>Thông báo</span>
         </div>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('equipment-lists.index') }}">
+                <i class="fas fa-list"></i> <span>Danh sách thiết bị</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('equipment-categories.index') }}">
+                <i class="fas fa-tags"></i> <span>Loại thiết bị</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('equipment-items.index') }}">
+                <i class="fas fa-microchip"></i> <span>Thiết bị</span>
+            </a>
+        </li>
     </div>
 
     <!-- Admin Card -->
@@ -52,7 +72,7 @@
             <div class="admin-avatar"><i class="fas fa-user-shield"></i></div>
             <div class="admin-details">
                 @php
-                    $roleNames = [0 => 'Nhân viên', 1 => 'Quản lý', 2 => 'Admin', 3 => 'Công nhân'];
+                    $roleNames = [0 => 'Admin', 1 => 'Quản lý Cấp Cao', 2 => 'Quản lý xí nghiệp', 3 => 'Nhân viên'];
                     $roleId = session('role_id');
                     $loginTime = session('login_time') ?? date('H:i:s d/m/Y');
                 @endphp

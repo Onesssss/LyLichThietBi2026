@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th3 21, 2026 lúc 04:29 PM
--- Phiên bản máy phục vụ: 10.4.32-MariaDB
--- Phiên bản PHP: 8.2.12
+-- Thời gian đã tạo: Th3 31, 2026 lúc 06:38 PM
+-- Phiên bản máy phục vụ: 10.4.28-MariaDB
+-- Phiên bản PHP: 8.2.4
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -44,8 +44,9 @@ CREATE TABLE `admins` (
 --
 
 INSERT INTO `admins` (`id`, `username`, `password`, `email`, `full_name`, `role_id`, `branch_id`, `dept_id`, `status`) VALUES
-(1, 'đường sắt', '123123', 'duongsat@gmail.com', 'duongsat', 0, 1, 3, 1),
-(3, 'demo', '321321', 'demo@gmail.com', 'demo', 3, 1, 2, 1);
+(1, 'đường sắt', '123123', 'duongsat@gmail.com', 'duongsat', 2, 1, 3, 1),
+(3, 'demo', '321321', 'demo@gmail.com', 'demo', 2, 1, 3, 1),
+(5, 'admin', '123456', 'admin@test.com', 'Administrator', 0, 1, 1, 1);
 
 -- --------------------------------------------------------
 
@@ -65,7 +66,9 @@ CREATE TABLE `branches` (
 --
 
 INSERT INTO `branches` (`id`, `name`, `created_at`, `updated_at`) VALUES
-(1, 'Xí Nghiệp Thuận Hải', '2026-03-21 10:25:03', '2026-03-21 10:25:03');
+(1, 'Xí Nghiệp Thuận Hải', '2026-03-21 10:25:03', '2026-03-21 10:25:03'),
+(2, 'Xí Nghiệp Phú Khánh', '2026-03-31 15:35:45', '2026-03-31 15:35:45'),
+(3, 'Xí Nghiệp Sài Gòn', '2026-03-31 15:35:55', '2026-03-31 15:35:55');
 
 -- --------------------------------------------------------
 
@@ -86,7 +89,91 @@ CREATE TABLE `departments` (
 --
 
 INSERT INTO `departments` (`id`, `branch_id`, `name`, `created_at`, `updated_at`) VALUES
-(3, 1, 'Cung Tháp Chàm', '2026-03-21 10:25:43', '2026-03-21 10:25:43');
+(3, 1, 'Cung Tháp Chàm', '2026-03-21 10:25:43', '2026-03-21 10:25:43'),
+(4, 1, 'Cung Cà Ná', '2026-03-31 15:36:16', '2026-03-31 15:36:16'),
+(5, 1, 'Cung Vĩnh Hảo', '2026-03-31 15:36:32', '2026-03-31 15:36:32'),
+(6, 3, 'Sài Gòn', '2026-03-31 16:11:33', '2026-03-31 16:11:33');
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `equipment_categories`
+--
+
+CREATE TABLE `equipment_categories` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `name` varchar(200) NOT NULL,
+  `list_id` bigint(20) UNSIGNED NOT NULL,
+  `point_id` int(11) NOT NULL,
+  `status` tinyint(4) NOT NULL DEFAULT 1 COMMENT '1: Hoạt động, 0: Vô hiệu',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `equipment_categories`
+--
+
+INSERT INTO `equipment_categories` (`id`, `name`, `list_id`, `point_id`, `status`, `created_at`, `updated_at`) VALUES
+(3, 'Thiết bị B', 6, 3, 1, '2026-03-31 04:30:52', '2026-03-31 15:43:10'),
+(4, 'Thiết bị A', 6, 3, 1, '2026-03-31 15:42:57', '2026-03-31 15:42:57');
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `equipment_items`
+--
+
+CREATE TABLE `equipment_items` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `name` varchar(200) NOT NULL,
+  `code` varchar(50) NOT NULL,
+  `category_id` bigint(20) UNSIGNED NOT NULL,
+  `point_id` int(11) NOT NULL,
+  `material` varchar(100) DEFAULT NULL,
+  `unit` varchar(50) DEFAULT NULL,
+  `quantity` int(11) NOT NULL DEFAULT 0,
+  `manufacture_year` int(11) DEFAULT NULL,
+  `expiry_date` date DEFAULT NULL,
+  `condition` tinyint(4) NOT NULL DEFAULT 1 COMMENT '1: Tốt, 2: Trung bình, 3: Hỏng',
+  `note` text DEFAULT NULL,
+  `status` tinyint(4) NOT NULL DEFAULT 1 COMMENT '1: Hoạt động, 0: Vô hiệu',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `equipment_items`
+--
+
+INSERT INTO `equipment_items` (`id`, `name`, `code`, `category_id`, `point_id`, `material`, `unit`, `quantity`, `manufacture_year`, `expiry_date`, `condition`, `note`, `status`, `created_at`, `updated_at`) VALUES
+(3, 'Thiết bị 01', '001', 4, 3, 'abc', 'cái', 1, 2025, '2026-03-12', 1, NULL, 1, '2026-03-31 15:43:40', '2026-03-31 15:43:40');
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `equipment_lists`
+--
+
+CREATE TABLE `equipment_lists` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `point_id` bigint(20) UNSIGNED DEFAULT NULL,
+  `name` varchar(200) NOT NULL,
+  `code` varchar(50) NOT NULL,
+  `description` text DEFAULT NULL,
+  `status` tinyint(4) NOT NULL DEFAULT 1 COMMENT '1: Hoạt động, 0: Vô hiệu',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `equipment_lists`
+--
+
+INSERT INTO `equipment_lists` (`id`, `point_id`, `name`, `code`, `description`, `status`, `created_at`, `updated_at`) VALUES
+(5, 2, 'Thiết bị truyền dẫn', '001', 'abc', 1, '2026-03-31 04:02:45', '2026-03-31 04:02:45'),
+(6, 3, 'Thiết bị SDH', '002', NULL, 1, '2026-03-31 04:04:22', '2026-03-31 04:04:22'),
+(7, 4, 'Thiết bị truyền dẫn', '004', NULL, 1, '2026-03-31 16:13:45', '2026-03-31 16:13:45');
 
 -- --------------------------------------------------------
 
@@ -105,8 +192,13 @@ CREATE TABLE `migrations` (
 --
 
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
-(1, '2026_03_18_002025_create_sessions_table', 1),
-(2, '2026_03_18_002344_create_password_resets_admin_table', 2);
+(5, '2026_03_18_002025_create_sessions_table', 1),
+(6, '2026_03_30_181721_create_equipment_lists_table', 2),
+(7, '2026_03_30_184030_create_equipment_categories_table', 3),
+(8, '2026_03_31_001939_create_equipment_items_table', 4),
+(10, '2026_03_31_003053_create_points_table', 5),
+(11, '2026_03_31_103739_add_point_id_to_equipment_lists_table', 6),
+(12, '2026_03_31_111517_add_point_id_to_equipment_categories_table', 7);
 
 -- --------------------------------------------------------
 
@@ -151,6 +243,32 @@ INSERT INTO `password_reset_requests` (`id`, `email`, `full_name`, `status`, `re
 -- --------------------------------------------------------
 
 --
+-- Cấu trúc bảng cho bảng `points`
+--
+
+CREATE TABLE `points` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `name` varchar(200) NOT NULL,
+  `code` varchar(50) NOT NULL,
+  `department_id` bigint(20) UNSIGNED NOT NULL,
+  `order` int(11) NOT NULL DEFAULT 1,
+  `status` tinyint(4) NOT NULL DEFAULT 1,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `points`
+--
+
+INSERT INTO `points` (`id`, `name`, `code`, `department_id`, `order`, `status`, `created_at`, `updated_at`) VALUES
+(2, 'TTTH Phước Nhơn', '002', 3, 1, 1, '2026-03-30 18:00:19', '2026-03-31 15:37:07'),
+(3, 'TTTH Kà Rôm', '001', 3, 1, 1, '2026-03-31 04:03:46', '2026-03-31 15:36:58'),
+(4, 'Sóng Thần', '003', 6, 1, 1, '2026-03-31 16:11:56', '2026-03-31 16:11:56');
+
+-- --------------------------------------------------------
+
+--
 -- Cấu trúc bảng cho bảng `sessions`
 --
 
@@ -168,20 +286,11 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
-('3aryIx1IEHO7NMzGKN1UUSNXL7iC6Zk1Qta15E1n', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36', 'YTozOntzOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX1zOjY6Il90b2tlbiI7czo0MDoiRGRjZjFYZlN5T3l4S3ZHaERSZUZocUpRN2FXdzA5RVhYR3l0b0FNaiI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzE6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMC9kYW5nLW5oYXAiO3M6NToicm91dGUiO3M6NToibG9naW4iO319', 1774103784),
-('639Bap6yUH5bJrxz6bzjDSgiN1nuFJIpX7YTOD3f', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36', 'YToxNTp7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo2OiJfdG9rZW4iO3M6NDA6IjJhS0lESnI1bElGUDNUY0tUQ0haTFFDdzhId3FudjF1MXdVN2w4ZVUiO3M6OToiX3ByZXZpb3VzIjthOjI6e3M6MzoidXJsIjtzOjI4OiJodHRwOi8vbG9jYWxob3N0OjgwMDAvYWRtaW5zIjtzOjU6InJvdXRlIjtzOjEyOiJhZG1pbnMuaW5kZXgiO31zOjc6InVzZXJfaWQiO2k6MTtzOjg6InVzZXJuYW1lIjtzOjE1OiLEkcaw4budbmcgc+G6r3QiO3M6ODoiZnVsbG5hbWUiO3M6ODoiZHVvbmdzYXQiO3M6NToiZW1haWwiO3M6MTg6ImR1b25nc2F0QGdtYWlsLmNvbSI7czo3OiJyb2xlX2lkIjtpOjA7czo5OiJicmFuY2hfaWQiO2k6MTtzOjc6ImRlcHRfaWQiO2k6MztzOjk6ImxvZ2dlZF9pbiI7YjoxO3M6NzoidXNlcl9pcCI7czo5OiIxMjcuMC4wLjEiO3M6MTA6InVzZXJfYWdlbnQiO3M6MTExOiJNb3ppbGxhLzUuMCAoV2luZG93cyBOVCAxMC4wOyBXaW42NDsgeDY0KSBBcHBsZVdlYktpdC81MzcuMzYgKEtIVE1MLCBsaWtlIEdlY2tvKSBDaHJvbWUvMTQ2LjAuMC4wIFNhZmFyaS81MzcuMzYiO3M6NzoiY3JlYXRlZCI7aToxNzc0MTA0MzQzO3M6MTM6Imxhc3RfYWN0aXZpdHkiO2k6MTc3NDEwNDM0Mzt9', 1774104364),
-('cmvviIQ0YieneRo5CRx2rh2I645uP7gx4FdyxtLX', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36', 'YToxNjp7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo2OiJfdG9rZW4iO3M6NDA6Ikh5Z2R5aDY4ZXVGdnBocTdKUGExU01Ccmk3Vm1yMVJXdDB5eElhckYiO3M6OToiX3ByZXZpb3VzIjthOjI6e3M6MzoidXJsIjtzOjQ1OiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYWRtaW4vcGFzc3dvcmQtcmVxdWVzdHMiO3M6NToicm91dGUiO3M6MjM6InBhc3N3b3JkLXJlcXVlc3RzLmluZGV4Ijt9czo3OiJ1c2VyX2lkIjtpOjE7czo4OiJ1c2VybmFtZSI7czoxNToixJHGsOG7nW5nIHPhuq90IjtzOjg6ImZ1bGxuYW1lIjtzOjg6ImR1b25nc2F0IjtzOjU6ImVtYWlsIjtzOjE4OiJkdW9uZ3NhdEBnbWFpbC5jb20iO3M6Nzoicm9sZV9pZCI7aTowO3M6OToiYnJhbmNoX2lkIjtpOjE7czo3OiJkZXB0X2lkIjtpOjM7czo5OiJsb2dnZWRfaW4iO2I6MTtzOjc6InVzZXJfaXAiO3M6OToiMTI3LjAuMC4xIjtzOjEwOiJ1c2VyX2FnZW50IjtzOjExMToiTW96aWxsYS81LjAgKFdpbmRvd3MgTlQgMTAuMDsgV2luNjQ7IHg2NCkgQXBwbGVXZWJLaXQvNTM3LjM2IChLSFRNTCwgbGlrZSBHZWNrbykgQ2hyb21lLzE0Ni4wLjAuMCBTYWZhcmkvNTM3LjM2IjtzOjc6ImNyZWF0ZWQiO2k6MTc3NDEwMzMwMDtzOjEzOiJsYXN0X2FjdGl2aXR5IjtpOjE3NzQxMDMzMDA7czozOiJ1cmwiO2E6MTp7czo4OiJpbnRlbmRlZCI7czo0NToiaHR0cDovLzEyNy4wLjAuMTo4MDAwL2FkbWluL3Bhc3N3b3JkLXJlcXVlc3RzIjt9fQ==', 1774104389),
-('GIsGE44TIUfZ4xs9zj1EhtVDu3hDW87bL6cRjhJk', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36', 'YTozOntzOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX1zOjY6Il90b2tlbiI7czo0MDoibkhGVjh3Q3ZBNkxXSHF3endXbHNaUldGNG56RmloVnBtZldTYkNYViI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzE6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9kYW5nLW5oYXAiO3M6NToicm91dGUiO3M6NToibG9naW4iO319', 1774101539),
-('GTZdtj05lbLqgpZt9syJWHL1FE4huOLe0Cb9maVg', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36', 'YToxNjp7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo2OiJfdG9rZW4iO3M6NDA6IkoxNUM4NGMzS2pEaUlXczdsOEJyaFI4Z2NxeFNPYVpmcEJNcDVmaDUiO3M6OToiX3ByZXZpb3VzIjthOjI6e3M6MzoidXJsIjtzOjMxOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvZGFuZy1uaGFwIjtzOjU6InJvdXRlIjtzOjU6ImxvZ2luIjt9czo3OiJ1c2VyX2lkIjtpOjE7czo4OiJ1c2VybmFtZSI7czoxNToixJHGsOG7nW5nIHPhuq90IjtzOjg6ImZ1bGxuYW1lIjtOO3M6NToiZW1haWwiO3M6MTg6ImR1b25nc2F0QGdtYWlsLmNvbSI7czo3OiJyb2xlX2lkIjtpOjE7czo5OiJicmFuY2hfaWQiO2k6MDtzOjc6ImRlcHRfaWQiO2k6MDtzOjk6ImxvZ2dlZF9pbiI7YjoxO3M6NzoidXNlcl9pcCI7czo5OiIxMjcuMC4wLjEiO3M6MTA6InVzZXJfYWdlbnQiO3M6MTExOiJNb3ppbGxhLzUuMCAoV2luZG93cyBOVCAxMC4wOyBXaW42NDsgeDY0KSBBcHBsZVdlYktpdC81MzcuMzYgKEtIVE1MLCBsaWtlIEdlY2tvKSBDaHJvbWUvMTQ2LjAuMC4wIFNhZmFyaS81MzcuMzYiO3M6NzoiY3JlYXRlZCI7aToxNzc0MTAxNTQ2O3M6MTM6Imxhc3RfYWN0aXZpdHkiO2k6MTc3NDEwMTU0NjtzOjM6InVybCI7YToxOntzOjg6ImludGVuZGVkIjtzOjQ1OiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYWRtaW4vcGFzc3dvcmQtcmVxdWVzdHMiO319', 1774101547),
-('gzpnQgTTo6dSl27xN2eRSBgSDFig6CkvKfdIaayA', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36', 'YTozOntzOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX1zOjY6Il90b2tlbiI7czo0MDoibGpFaWpTc0ZzQVZDbEU3VndPZ2FodEdoZTlHWk1Ma3ZoMmhPczR0eiI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzE6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9kYW5nLW5oYXAiO3M6NToicm91dGUiO3M6NToibG9naW4iO319', 1774101510),
-('ILlopCWXYmO7kbt7brLjKeZPY1zY4kuCbR4WoOzg', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36', 'YTozOntzOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX1zOjY6Il90b2tlbiI7czo0MDoiQ25kMXk5U0thRWtienpXaG1STzZpOTE2bnZGbUNvSW5XUjhoRVg4ZyI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzE6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMC9kYW5nLW5oYXAiO3M6NToicm91dGUiO3M6NToibG9naW4iO319', 1774103711),
-('InJQgBUWEROBm1WZ5DBKySj33xWsiRjh0gpHiU7h', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36', 'YToxNjp7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo2OiJfdG9rZW4iO3M6NDA6IkhGYUNJaGN3alF4d0VqZE1TMGxNa1JEN2s1VndGVXlGTGJyY2FkWHMiO3M6OToiX3ByZXZpb3VzIjthOjI6e3M6MzoidXJsIjtzOjMxOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvZGFuZy1uaGFwIjtzOjU6InJvdXRlIjtzOjU6ImxvZ2luIjt9czo3OiJ1c2VyX2lkIjtpOjE7czo4OiJ1c2VybmFtZSI7czoxNToixJHGsOG7nW5nIHPhuq90IjtzOjg6ImZ1bGxuYW1lIjtOO3M6NToiZW1haWwiO3M6MTg6ImR1b25nc2F0QGdtYWlsLmNvbSI7czo3OiJyb2xlX2lkIjtpOjA7czo5OiJicmFuY2hfaWQiO2k6MTtzOjc6ImRlcHRfaWQiO2k6MztzOjk6ImxvZ2dlZF9pbiI7YjoxO3M6NzoidXNlcl9pcCI7czo5OiIxMjcuMC4wLjEiO3M6MTA6InVzZXJfYWdlbnQiO3M6MTExOiJNb3ppbGxhLzUuMCAoV2luZG93cyBOVCAxMC4wOyBXaW42NDsgeDY0KSBBcHBsZVdlYktpdC81MzcuMzYgKEtIVE1MLCBsaWtlIEdlY2tvKSBDaHJvbWUvMTQ2LjAuMC4wIFNhZmFyaS81MzcuMzYiO3M6NzoiY3JlYXRlZCI7aToxNzc0MTAxNjA2O3M6MTM6Imxhc3RfYWN0aXZpdHkiO2k6MTc3NDEwMTYwNjtzOjM6InVybCI7YToxOntzOjg6ImludGVuZGVkIjtzOjQ1OiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYWRtaW4vcGFzc3dvcmQtcmVxdWVzdHMiO319', 1774101636),
-('joCwdjWkrgBCgQ0lpNc8eup6PWQxzjIrp5EoufuG', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36', 'YToxNjp7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo2OiJfdG9rZW4iO3M6NDA6IlhCM1BWOTNleWFrdmFiQUZFMGRQaEgyNVozNzBPN1g3eXBCaGNOOTciO3M6OToiX3ByZXZpb3VzIjthOjI6e3M6MzoidXJsIjtzOjMxOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvZGFuZy1uaGFwIjtzOjU6InJvdXRlIjtzOjU6ImxvZ2luIjt9czo3OiJ1c2VyX2lkIjtpOjE7czo4OiJ1c2VybmFtZSI7czoxNToixJHGsOG7nW5nIHPhuq90IjtzOjg6ImZ1bGxuYW1lIjtOO3M6NToiZW1haWwiO3M6MTg6ImR1b25nc2F0QGdtYWlsLmNvbSI7czo3OiJyb2xlX2lkIjtpOjA7czo5OiJicmFuY2hfaWQiO2k6MTtzOjc6ImRlcHRfaWQiO2k6MztzOjk6ImxvZ2dlZF9pbiI7YjoxO3M6NzoidXNlcl9pcCI7czo5OiIxMjcuMC4wLjEiO3M6MTA6InVzZXJfYWdlbnQiO3M6MTExOiJNb3ppbGxhLzUuMCAoV2luZG93cyBOVCAxMC4wOyBXaW42NDsgeDY0KSBBcHBsZVdlYktpdC81MzcuMzYgKEtIVE1MLCBsaWtlIEdlY2tvKSBDaHJvbWUvMTQ2LjAuMC4wIFNhZmFyaS81MzcuMzYiO3M6NzoiY3JlYXRlZCI7aToxNzc0MTAyODY3O3M6MTM6Imxhc3RfYWN0aXZpdHkiO2k6MTc3NDEwMjg2NztzOjM6InVybCI7YToxOntzOjg6ImludGVuZGVkIjtzOjQ1OiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYWRtaW4vcGFzc3dvcmQtcmVxdWVzdHMiO319', 1774103291),
-('NdCAOsMl1f6roqPPgC19gFd8WCAc8X4R0eCpnWFl', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36', 'YTozOntzOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX1zOjY6Il90b2tlbiI7czo0MDoiVlUzOHVvWmRvS29mZUZuaFR4Njl2WG16V1YyWnJPTjhndUc2QkFBMyI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzE6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMC9kYW5nLW5oYXAiO3M6NToicm91dGUiO3M6NToibG9naW4iO319', 1774104307),
-('nhFpgtok17tUESrhX7hGfDRIdcMG5Vugmq2Ogpzs', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36', 'YTozOntzOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX1zOjY6Il90b2tlbiI7czo0MDoiakVsS0ZSNUJxbUdkbG82ZnVaZkt4OTVoYjZzYlM0ZWJxTGRPeTYxeCI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzE6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9kYW5nLW5oYXAiO3M6NToicm91dGUiO3M6NToibG9naW4iO319', 1774101518),
-('O3wLUAknv0gfxWfDuKKNLAeqSAuVaPjsiYp7RhEK', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36', 'YToxNjp7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo2OiJfdG9rZW4iO3M6NDA6IlhxOHVqOG1VcVM2d2E4TW0wVVZRN3JzazlqRGMwU1JNcTdUZ3lBV3ciO3M6OToiX3ByZXZpb3VzIjthOjI6e3M6MzoidXJsIjtzOjMxOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvZGFuZy1uaGFwIjtzOjU6InJvdXRlIjtzOjU6ImxvZ2luIjt9czo3OiJ1c2VyX2lkIjtpOjE7czo4OiJ1c2VybmFtZSI7czoxNToixJHGsOG7nW5nIHPhuq90IjtzOjg6ImZ1bGxuYW1lIjtOO3M6NToiZW1haWwiO3M6MTg6ImR1b25nc2F0QGdtYWlsLmNvbSI7czo3OiJyb2xlX2lkIjtpOjA7czo5OiJicmFuY2hfaWQiO2k6MTtzOjc6ImRlcHRfaWQiO2k6MztzOjk6ImxvZ2dlZF9pbiI7YjoxO3M6NzoidXNlcl9pcCI7czo5OiIxMjcuMC4wLjEiO3M6MTA6InVzZXJfYWdlbnQiO3M6MTExOiJNb3ppbGxhLzUuMCAoV2luZG93cyBOVCAxMC4wOyBXaW42NDsgeDY0KSBBcHBsZVdlYktpdC81MzcuMzYgKEtIVE1MLCBsaWtlIEdlY2tvKSBDaHJvbWUvMTQ2LjAuMC4wIFNhZmFyaS81MzcuMzYiO3M6NzoiY3JlYXRlZCI7aToxNzc0MTAxNjQ2O3M6MTM6Imxhc3RfYWN0aXZpdHkiO2k6MTc3NDEwMTY0NjtzOjM6InVybCI7YToxOntzOjg6ImludGVuZGVkIjtzOjQ1OiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYWRtaW4vcGFzc3dvcmQtcmVxdWVzdHMiO319', 1774102859),
-('PmlpO4wTKQsYXp0nDnZRARpjtJT56x2cwJ4kA3yg', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36', 'YTozOntzOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX1zOjY6Il90b2tlbiI7czo0MDoibFRkd1JORWtickxnYjVKYkJ3clZGUHFxU2RlYTM3eVJvVVI1ZHN4aSI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzE6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9kYW5nLW5oYXAiO3M6NToicm91dGUiO3M6NToibG9naW4iO319', 1774101601),
-('tB7U8raq8GFfPrhXCCdhjEftlFsyipAzrAsXM3BZ', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiVGd1STRjVzNZTERBblpNTXVEMEZEaW9icmFRSUl0N3d2dzM3MWhIMyI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzE6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9kYW5nLW5oYXAiO3M6NToicm91dGUiO3M6NToibG9naW4iO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1774101427);
+('4VpnYGIepTQhMCUV9jIMzQrIxDh4j9OhbSz6Xkdl', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36', 'YToxNTp7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo2OiJfdG9rZW4iO3M6NDA6IkxyN2RRcHVUM2hId0pKcXBtQVY4ZFJKYXVrNWZ1TWs3WXRkVFQ3QTEiO3M6OToiX3ByZXZpb3VzIjthOjI6e3M6MzoidXJsIjtzOjM3OiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvZXF1aXBtZW50LWl0ZW1zIjtzOjU6InJvdXRlIjtzOjIxOiJlcXVpcG1lbnQtaXRlbXMuaW5kZXgiO31zOjc6InVzZXJfaWQiO2k6NTtzOjg6InVzZXJuYW1lIjtzOjU6ImFkbWluIjtzOjg6ImZ1bGxuYW1lIjtzOjEzOiJBZG1pbmlzdHJhdG9yIjtzOjU6ImVtYWlsIjtzOjE0OiJhZG1pbkB0ZXN0LmNvbSI7czo3OiJyb2xlX2lkIjtpOjA7czo5OiJicmFuY2hfaWQiO2k6MTtzOjc6ImRlcHRfaWQiO2k6MTtzOjk6ImxvZ2dlZF9pbiI7YjoxO3M6NzoidXNlcl9pcCI7czo5OiIxMjcuMC4wLjEiO3M6MTA6InVzZXJfYWdlbnQiO3M6MTExOiJNb3ppbGxhLzUuMCAoV2luZG93cyBOVCAxMC4wOyBXaW42NDsgeDY0KSBBcHBsZVdlYktpdC81MzcuMzYgKEtIVE1MLCBsaWtlIEdlY2tvKSBDaHJvbWUvMTQ2LjAuMC4wIFNhZmFyaS81MzcuMzYiO3M6NzoiY3JlYXRlZCI7aToxNzc0OTczNzAwO3M6MTM6Imxhc3RfYWN0aXZpdHkiO2k6MTc3NDk3MzcwMDt9', 1774974060),
+('61HU4olnCIzzcRo24GjkL5330TIXIYtLiopOr5Td', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiMGhQU2VlWTRzbGFLQXZkYUN4VVdvT0o4dmJRa1ZOV3ZwRWRFSm9qdiI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzE6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9kYW5nLW5oYXAiO3M6NToicm91dGUiO3M6NToibG9naW4iO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1774971321),
+('Gr1CLhlWrqQiaiWzD6kKbcDxHSTQ35Nk4vJhSUUq', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36', 'YTozOntzOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX1zOjY6Il90b2tlbiI7czo0MDoidW1kUnVuSkIycHh5NWxTMXczTGN3dTB5TWR3NEJTODh0aVhwaHZqTiI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzE6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9kYW5nLW5oYXAiO3M6NToicm91dGUiO3M6NToibG9naW4iO319', 1774973674),
+('jYtd3ignDTGUcacyj3trnMwwmnO9LyEhbnItgHl7', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36', 'YTozOntzOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX1zOjY6Il90b2tlbiI7czo0MDoiZ0NGanNVc0YweGFFVlltRjNuckdlUzFzQm1DWkJQMGpqcncwNVlSMyI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzE6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9kYW5nLW5oYXAiO3M6NToicm91dGUiO3M6NToibG9naW4iO319', 1774973639),
+('t7IYlrmKyzGbYerFvREZgKyEDa2xJ4TzGWkBZdZv', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36', 'YTozOntzOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX1zOjY6Il90b2tlbiI7czo0MDoiTmZ4NHhJaEZPcWc0ZWMwUllhdXhVenFlZzRGNlRZZVg5eGNBaklFeiI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzE6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9kYW5nLW5oYXAiO3M6NToicm91dGUiO3M6NToibG9naW4iO319', 1774973696);
 
 --
 -- Chỉ mục cho các bảng đã đổ
@@ -206,6 +315,28 @@ ALTER TABLE `departments`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Chỉ mục cho bảng `equipment_categories`
+--
+ALTER TABLE `equipment_categories`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `equipment_categories_list_id_foreign` (`list_id`);
+
+--
+-- Chỉ mục cho bảng `equipment_items`
+--
+ALTER TABLE `equipment_items`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `equipment_items_code_unique` (`code`),
+  ADD KEY `equipment_items_category_id_foreign` (`category_id`);
+
+--
+-- Chỉ mục cho bảng `equipment_lists`
+--
+ALTER TABLE `equipment_lists`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `equipment_lists_code_unique` (`code`);
+
+--
 -- Chỉ mục cho bảng `migrations`
 --
 ALTER TABLE `migrations`
@@ -224,6 +355,13 @@ ALTER TABLE `password_reset_requests`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Chỉ mục cho bảng `points`
+--
+ALTER TABLE `points`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `points_code_unique` (`code`);
+
+--
 -- Chỉ mục cho bảng `sessions`
 --
 ALTER TABLE `sessions`
@@ -239,25 +377,43 @@ ALTER TABLE `sessions`
 -- AUTO_INCREMENT cho bảng `admins`
 --
 ALTER TABLE `admins`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT cho bảng `branches`
 --
 ALTER TABLE `branches`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT cho bảng `departments`
 --
 ALTER TABLE `departments`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
+-- AUTO_INCREMENT cho bảng `equipment_categories`
+--
+ALTER TABLE `equipment_categories`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT cho bảng `equipment_items`
+--
+ALTER TABLE `equipment_items`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT cho bảng `equipment_lists`
+--
+ALTER TABLE `equipment_lists`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT cho bảng `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT cho bảng `password_resets_admin`
@@ -270,6 +426,28 @@ ALTER TABLE `password_resets_admin`
 --
 ALTER TABLE `password_reset_requests`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT cho bảng `points`
+--
+ALTER TABLE `points`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- Các ràng buộc cho các bảng đã đổ
+--
+
+--
+-- Các ràng buộc cho bảng `equipment_categories`
+--
+ALTER TABLE `equipment_categories`
+  ADD CONSTRAINT `equipment_categories_list_id_foreign` FOREIGN KEY (`list_id`) REFERENCES `equipment_lists` (`id`) ON DELETE CASCADE;
+
+--
+-- Các ràng buộc cho bảng `equipment_items`
+--
+ALTER TABLE `equipment_items`
+  ADD CONSTRAINT `equipment_items_category_id_foreign` FOREIGN KEY (`category_id`) REFERENCES `equipment_categories` (`id`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
