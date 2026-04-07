@@ -9,7 +9,7 @@ class EquipmentList extends Model
     protected $table = 'equipment_lists';
     
     protected $fillable = [
-        'name', 'code', 'point_id', 'description', 'status'
+        'name', 'point_id', 'description', 'status'
     ];
     
     // Quan hệ với Point

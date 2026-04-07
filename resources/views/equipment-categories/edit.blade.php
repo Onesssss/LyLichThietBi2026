@@ -11,62 +11,121 @@
         </div>
     </div>
 
+    <!-- Info -->
+    <div class="info-note" style="margin-bottom: 20px;">
+        <i class="fas fa-info-circle"></i>
+        <span>Chỉnh sửa thông tin loại thiết bị.</span>
+    </div>
+
+    <!-- Error -->
     @if($errors->any())
-    <div class="alert alert-danger">
-        <ul>@foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul>
+    <div class="alert alert-danger" style="background: #f8d7da; color: #721c24; padding: 12px 20px; border-radius: 8px; margin-bottom: 20px;">
+        <i class="fas fa-exclamation-circle"></i> Vui lòng kiểm tra lại thông tin
+        <ul style="margin-top: 10px; margin-bottom: 0;">
+            @foreach($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
     </div>
     @endif
 
-    <div style="background: white; border-radius: 12px; padding: 25px;">
+    <div style="background: white; border-radius: 12px; padding: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
         <form action="{{ route('equipment-categories.update', $category->id) }}" method="POST">
             @csrf
             @method('PUT')
 
-            <div class="mb-3">
-                <label>Thuộc danh sách thiết bị <span style="color:red">*</span></label>
-                <select name="list_id" class="form-control" required>
-                    <option value="">-- Chọn danh sách --</option>
-                    @foreach($lists as $list)
-                        <option value="{{ $list->id }}" {{ old('list_id', $category->list_id) == $list->id ? 'selected' : '' }}>
-                            {{ $list->name }}
-                        </option>
-                    @endforeach
-                </select>
+            <div class="row">
+                <!-- Thuộc danh sách thiết bị -->
+                <div class="col-md-6">
+                    <div style="margin-bottom: 20px;">
+                        <label style="font-weight: 500;">Thuộc danh sách thiết bị <span style="color:red">*</span></label>
+                        <select name="list_id" class="form-control"
+                                style="padding:10px; border-radius:6px;" required>
+                            <option value="">-- Chọn danh sách --</option>
+                            @foreach($lists as $list)
+                                <option value="{{ $list->id }}" {{ old('list_id', $category->list_id) == $list->id ? 'selected' : '' }}>
+                                    {{ $list->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('list_id')
+                        <div style="color:red; font-size:13px;">{{ $message }}</div>
+                        @enderror
+                    </div>
+                </div>
+
+                <!-- Thuộc chốt -->
+                <div class="col-md-6">
+                    <div style="margin-bottom: 20px;">
+                        <label style="font-weight: 500;">Thuộc chốt <span style="color:red">*</span></label>
+                        <select name="point_id" class="form-control"
+                                style="padding:10px; border-radius:6px;" required>
+                            <option value="">-- Chọn chốt --</option>
+                            @foreach($points as $point)
+                                <option value="{{ $point->id }}" {{ (old('point_id', $category->point_id) == $point->id) ? 'selected' : '' }}>
+                                    [{{ $point->department->branch->name ?? '' }} - {{ $point->department->name ?? '' }}] {{ $point->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('point_id')
+                        <div style="color:red; font-size:13px;">{{ $message }}</div>
+                        @enderror
+                    </div>
+                </div>
             </div>
 
-            <div class="col-md-6 mb-3">
-                <label>Thuộc chốt <span style="color:red">*</span></label>
-                <select name="point_id" class="form-control" required>
-                    <option value="">-- Chọn chốt --</option>
-                    @foreach($points as $point)
-                        <option value="{{ $point->id }}" {{ (old('point_id', $category->point_id) == $point->id) ? 'selected' : '' }}>
-                            [{{ $point->department->branch->name ?? '' }} - {{ $point->department->name ?? '' }}] {{ $point->name }}
-                        </option>
-                    @endforeach
-                </select>
+            <!-- Tên loại thiết bị -->
+            <div style="margin-bottom: 20px;">
+                <label style="font-weight: 500;">Tên loại thiết bị <span style="color:red">*</span></label>
+                <input type="text" name="name" class="form-control"
+                       style="padding:10px; border-radius:6px;"
+                       value="{{ old('name', $category->name) }}" required>
+                @error('name')
+                <div style="color:red; font-size:13px;">{{ $message }}</div>
+                @enderror
             </div>
 
-            <div class="mb-3">
-                <label>Tên loại thiết bị <span style="color:red">*</span></label>
-                <input type="text" name="name" class="form-control" value="{{ old('name', $category->name) }}" required>
-            </div>
-
-            <div class="mb-3">
-                <label>Trạng thái</label>
-                <select name="status" class="form-control">
+            <!-- Trạng thái -->
+            <div style="margin-bottom: 20px;">
+                <label style="font-weight: 500;">Trạng thái</label>
+                <select name="status" class="form-control"
+                        style="padding:10px; border-radius:6px;">
                     <option value="1" {{ old('status', $category->status) == 1 ? 'selected' : '' }}>Hoạt động</option>
                     <option value="0" {{ old('status', $category->status) == 0 ? 'selected' : '' }}>Vô hiệu</option>
                 </select>
+                @error('status')
+                <div style="color:red; font-size:13px;">{{ $message }}</div>
+                @enderror
             </div>
 
-            <button type="submit" class="btn btn-primary">Cập nhật</button>
-            <a href="{{ route('equipment-categories.index') }}" class="btn btn-secondary">Quay lại</a>
+            <!-- Buttons -->
+            <div style="margin-top: 25px;">
+                <button type="submit"
+                        style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                               color: white; padding: 10px 24px; border-radius: 6px; border: none;">
+                    <i class="fas fa-save"></i> Cập nhật
+                </button>
+
+                <a href="{{ route('equipment-categories.index') }}"
+                   style="background: #6c757d; color: white; padding: 10px 24px;
+                          border-radius: 6px; text-decoration: none; margin-left: 10px;">
+                    <i class="fas fa-arrow-left"></i> Quay lại
+                </a>
+            </div>
         </form>
     </div>
 </main>
 
 <script>
-    document.getElementById('dateText').innerHTML = new Date().toLocaleDateString('vi-VN');
+function updateDateTime() {
+    const now = new Date();
+    const dateStr = now.toLocaleDateString('vi-VN', {
+        day: '2-digit', month: '2-digit', year: 'numeric'
+    });
+    document.getElementById('dateText').innerHTML = dateStr;
+}
+updateDateTime();
 </script>
+
 </body>
 </html>

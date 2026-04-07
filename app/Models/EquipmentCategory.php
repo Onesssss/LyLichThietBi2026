@@ -27,4 +27,8 @@ class EquipmentCategory extends Model
     {
         return $this->belongsTo(Point::class, 'point_id');
     }
+    public function equipmentItems()
+    {
+        return $this->hasMany(EquipmentItem::class, 'category_id');
+    }
 }

@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 class BranchController extends Controller
 {
-    // Hiển thị danh sách
+
     public function index()
         {
             // Kiểm tra quyền
@@ -23,7 +23,7 @@ class BranchController extends Controller
             return view('branches.index', compact('branches'));
         }
 
-    // Hiển thị form thêm
+
     public function create()
     {
         if (!PermissionHelper::canManageBranches()) {
@@ -31,7 +31,7 @@ class BranchController extends Controller
         }
         return view('branches.create');
     }
-    // Lưu mới
+
     public function store(Request $request)
     {
         if (!PermissionHelper::canManageBranches()) {
@@ -50,7 +50,6 @@ class BranchController extends Controller
             ->with('success', 'Thêm xí nghiệp thành công!');
     }
 
-    // Hiển thị form sửa
     public function edit($id)
     {
         if (!PermissionHelper::canManageBranches()) {
@@ -58,8 +57,7 @@ class BranchController extends Controller
         }
         
         $branch = Branch::findOrFail($id);
-        
-        // User chỉ được sửa branch của mình
+
         if (PermissionHelper::isUser() && $branch->id != PermissionHelper::getBranchId()) {
             abort(403, 'Bạn không có quyền sửa xí nghiệp này');
         }
@@ -67,7 +65,7 @@ class BranchController extends Controller
         return view('branches.edit', compact('branch'));
     }
 
-    // Cập nhật
+
     public function update(Request $request, $id)
     {
         if (!PermissionHelper::canManageBranches()) {
@@ -95,7 +93,7 @@ class BranchController extends Controller
             ->with('success', 'Cập nhật xí nghiệp thành công!');
     }
 
-    // Xóa
+
     public function destroy($id)
     {
         if (!PermissionHelper::isAdmin()) {

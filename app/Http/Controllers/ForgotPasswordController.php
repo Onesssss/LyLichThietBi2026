@@ -17,7 +17,6 @@ class ForgotPasswordController extends Controller
     // Xử lý gửi yêu cầu
     public function sendRequest(Request $request)
     {
-        // Validate email
         $request->validate([
             'email' => 'required|email|exists:admins,email'
         ], [
@@ -26,10 +25,9 @@ class ForgotPasswordController extends Controller
             'email.exists' => 'Email không tồn tại trong hệ thống'
         ]);
 
-        // Lấy thông tin user
         $user = Admin::where('email', $request->email)->first();
 
-        // Kiểm tra đã có yêu cầu chờ xử lý chưa
+        // Kiểm tra yêu cầu chờ xử lý
         $existingRequest = PasswordResetRequest::where('email', $request->email)
             ->where('status', 0)
             ->first();
@@ -50,13 +48,15 @@ class ForgotPasswordController extends Controller
         return back()->with('success', 'Yêu cầu đã được gửi! Admin sẽ liên hệ để cấp lại mật khẩu.');
     }
 
-     // Hiển thị danh sách yêu cầu cho Admin
+    // Hiển thị danh sách yêu cầu cho Admin
     public function index()
     {
-        // Kiểm tra quyền (chỉ Admin role_id 0,1)
         if (!in_array(session('role_id'), [0, 1])) {
             abort(403, 'Bạn không có quyền truy cập');
         }
+
+        // Tự động xóa các yêu cầu đã xử lý quá 2 phút
+        $this->autoDeleteExpiredRequests();
 
         $requests = PasswordResetRequest::with('processor')
             ->orderBy('id', 'desc')
@@ -74,7 +74,6 @@ class ForgotPasswordController extends Controller
 
         $request = PasswordResetRequest::findOrFail($id);
         
-        // Chỉ xử lý yêu cầu chưa được xử lý
         if ($request->status == 1) {
             return redirect()->route('password-requests.index')
                 ->with('error', 'Yêu cầu này đã được xử lý trước đó!');
@@ -102,13 +101,13 @@ class ForgotPasswordController extends Controller
 
         $resetRequest = PasswordResetRequest::findOrFail($id);
         
-        // Cập nhật mật khẩu mới cho user
         $user = Admin::where('email', $resetRequest->email)->first();
+        
+        // LƯU Ý: Lưu plain text, KHÔNG mã hóa
         $user->update([
-            'password' => $request->new_password
+            'password' => $request->new_password  // Không dùng bcrypt()
         ]);
 
-        // Cập nhật trạng thái yêu cầu
         $resetRequest->update([
             'status' => 1,
             'processed_at' => now(),
@@ -116,6 +115,34 @@ class ForgotPasswordController extends Controller
         ]);
 
         return redirect()->route('password-requests.index')
-            ->with('success', 'Đã cấp lại mật khẩu cho ' . $user->full_name);
+            ->with('success', 'Đã cấp lại mật khẩu cho ' . $user->full_name . '. Mật khẩu mới: ' . $request->new_password);
+    }
+
+    // Xóa thủ công một yêu cầu
+    public function destroy($id)
+    {
+        if (!in_array(session('role_id'), [0, 1])) {
+            abort(403, 'Bạn không có quyền xóa yêu cầu');
+        }
+
+        $request = PasswordResetRequest::findOrFail($id);
+        $email = $request->email;
+        
+        $request->delete();
+
+        return redirect()->route('password-requests.index')
+            ->with('success', 'Đã xóa yêu cầu của ' . $email);
+    }
+
+    // Tự động xóa các yêu cầu đã xử lý quá 2 phút
+    private function autoDeleteExpiredRequests()
+    {
+        $processedRequests = PasswordResetRequest::where('status', 1)->get();
+        
+        foreach ($processedRequests as $request) {
+            if ($request->isExpired()) {
+                $request->delete();
+            }
+        }
     }
 }

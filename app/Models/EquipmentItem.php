@@ -9,7 +9,7 @@ class EquipmentItem extends Model
     protected $table = 'equipment_items';
     
     protected $fillable = [
-    'name', 'code', 'category_id', 'point_id', 'material', 'unit',
+    'name', 'category_id', 'point_id', 'material', 'unit',
     'quantity', 'manufacture_year', 'expiry_date', 'condition', 'note', 'status'
     ];
     

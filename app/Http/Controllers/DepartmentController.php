@@ -9,8 +9,8 @@ use Illuminate\Http\Request;
 
 class DepartmentController extends Controller
 {
-    // Hiển thị danh sách
-    public function index()
+
+    public function index(Request $request)
     {
         if (!PermissionHelper::canManageDepartments()) {
             abort(403, 'Bạn không có quyền truy cập');
@@ -18,12 +18,32 @@ class DepartmentController extends Controller
         
         $query = Department::with('branch');
         $query = PermissionHelper::filterDepartment($query);
-        $departments = $query->orderBy('id', 'desc')->get();
         
-        return view('departments.index', compact('departments'));
+
+        $branches = Branch::orderBy('name')->get();
+        
+    
+        if ($request->filled('name')) {
+            $query->where('name', 'like', '%' . $request->name . '%');
+        }
+        
+    
+        if ($request->filled('branch_id')) {
+            $query->where('branch_id', $request->branch_id);
+        }
+        
+     
+        $sortBy = $request->get('sort_by', 'id');
+        $sortOrder = $request->get('sort_order', 'desc');
+        $query->orderBy($sortBy, $sortOrder);
+        
+        // Phân trang
+        $departments = $query->paginate(15)->appends($request->query());
+        
+        return view('departments.index', compact('departments', 'branches'));
     }
 
-    // Hiển thị form thêm mới
+
     public function create()
     {
         if (!PermissionHelper::canManageDepartments()) {
@@ -39,7 +59,7 @@ class DepartmentController extends Controller
         return view('departments.create', compact('branches'));
     }
 
-    // Lưu mới
+   
     public function store(Request $request)
     {
         if (!PermissionHelper::canManageDepartments()) {
@@ -57,7 +77,7 @@ class DepartmentController extends Controller
             ->with('success', 'Thêm cung thành công!');
     }
 
-    // Hiển thị form sửa
+
     public function edit($id)
     {
         if (!PermissionHelper::canManageDepartments()) {
@@ -66,7 +86,7 @@ class DepartmentController extends Controller
         
         $department = Department::findOrFail($id);
         
-        // Kiểm tra quyền sửa theo role
+
         if (PermissionHelper::isUser() && $department->branch_id != PermissionHelper::getBranchId()) {
             abort(403, 'Bạn không có quyền sửa cung này');
         }
@@ -84,7 +104,7 @@ class DepartmentController extends Controller
         return view('departments.edit', compact('department', 'branches'));
     }
 
-    // Cập nhật
+
     public function update(Request $request, $id)
     {
         if (!PermissionHelper::canManageDepartments()) {
@@ -112,7 +132,7 @@ class DepartmentController extends Controller
             ->with('success', 'Cập nhật cung thành công!');
     }
 
-    // Xóa
+
     public function destroy($id)
     {
         // Chỉ Admin và Moderator mới được xóa

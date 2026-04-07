@@ -30,7 +30,7 @@
             
             <div class="row">
                 <div class="col-md-6">
-                    <!-- Tên đăng nhập -->
+            
                     <div style="margin-bottom: 20px;">
                         <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #495057;">Tên đăng nhập <span style="color: red;">*</span></label>
                         <input type="text" name="username" class="form-control" style="width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 6px;" 
@@ -42,7 +42,7 @@
                 </div>
                 
                 <div class="col-md-6">
-                    <!-- Mật khẩu (không bắt buộc) -->
+              
                     <div style="margin-bottom: 20px;">
                         <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #495057;">Mật khẩu mới</label>
                         <input type="password" name="password" class="form-control" style="width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 6px;" 
@@ -88,10 +88,9 @@
                         <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #495057;">Vai trò <span style="color: red;">*</span></label>
                         <select name="role_id" class="form-control" style="width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 6px;" required>
                             <option value="">-- Chọn vai trò --</option>
-                            <option value="0" {{ old('role_id', $admin->role_id) == '0' ? 'selected' : '' }}>Admin</option>
-                            <option value="1" {{ old('role_id', $admin->role_id) == '1' ? 'selected' : '' }}>Moderator</option>
-                            <option value="2" {{ old('role_id', $admin->role_id) == '2' ? 'selected' : '' }}>User</option>
-                            <option value="3" {{ old('role_id', $admin->role_id) == '3' ? 'selected' : '' }}>Guest</option>
+                            <option value="1" {{ old('role_id', $admin->role_id) == '1' ? 'selected' : '' }}>Quản Lý Công Ty</option>
+                            <option value="2" {{ old('role_id', $admin->role_id) == '2' ? 'selected' : '' }}>Quản Lý Xí Nghiệp</option>
+                            <option value="3" {{ old('role_id', $admin->role_id) == '3' ? 'selected' : '' }}>Tổ Trưởng tổ Sản Xuất</option>
                         </select>
                         @error('role_id')
                         <div style="color: red; font-size: 13px; margin-top: 5px;">{{ $message }}</div>

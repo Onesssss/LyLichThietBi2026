@@ -11,18 +11,58 @@ use Illuminate\Http\Request;
 
 class AdminController extends Controller
 {
-    // Hiển thị danh sách admin
-    public function index()
-    {
-        if (!PermissionHelper::canManageUsers()) {
-            abort(403, 'Chỉ Admin mới có quyền truy cập');
-        }
-        
-        $admins = Admin::with(['branch', 'department'])->orderBy('id', 'desc')->get();
-        return view('admins.index', compact('admins'));
+public function index(Request $request)
+{
+
+    if (!PermissionHelper::canManageUsers()) {
+        abort(403, 'Chỉ Admin mới có quyền truy cập');
+    }
+    
+
+    $query = Admin::with(['branch', 'department']);
+    
+
+    if (session('role_id') != 0) {
+        $query->where('role_id', '!=', 0);
+    }
+    
+
+    $branches = Branch::orderBy('name')->get();
+    
+
+    if ($request->filled('search')) {
+        $search = $request->search;
+        $query->where(function($q) use ($search) {
+            $q->where('username', 'like', '%' . $search . '%')
+              ->orWhere('email', 'like', '%' . $search . '%');
+        });
+    }
+    
+
+    if ($request->filled('role_id')) {
+        $query->where('role_id', $request->role_id);
     }
 
-    // Hiển thị form thêm mới
+    if ($request->filled('branch_id')) {
+        $query->where('branch_id', $request->branch_id);
+    }
+    
+  
+    if ($request->filled('status')) {
+        $query->where('status', $request->status);
+    }
+   
+    $sortBy = $request->get('sort_by', 'id');
+    $sortOrder = $request->get('sort_order', 'desc');
+    $query->orderBy($sortBy, $sortOrder);
+    
+
+    $admins = $query->paginate(15)->appends($request->query());
+    
+    return view('admins.index', compact('admins', 'branches'));
+}
+
+
     public function create()
     {
         if (!PermissionHelper::canManageUsers()) {
@@ -36,7 +76,7 @@ class AdminController extends Controller
         return view('admins.create', compact('branches', 'departments'));
     }
 
-    // Lưu admin mới
+
     public function store(Request $request)
     {
         if (!PermissionHelper::canManageUsers()) {
@@ -69,7 +109,7 @@ class AdminController extends Controller
             ->with('success', 'Thêm người dùng thành công!');
     }
 
-    // Hiển thị form sửa
+
     public function edit($id)
     {
         if (!PermissionHelper::canManageUsers()) {
@@ -78,7 +118,6 @@ class AdminController extends Controller
         
         $admin = Admin::findOrFail($id);
         
-        // Không cho sửa Admin khác nếu không phải là chính mình
         if ($admin->role_id == 0 && $admin->id != session('user_id')) {
             abort(403, 'Bạn không thể sửa tài khoản Admin khác');
         }
@@ -90,7 +129,7 @@ class AdminController extends Controller
         return view('admins.edit', compact('admin', 'branches', 'departments'));
     }
 
-    // Cập nhật admin
+
     public function update(Request $request, $id)
     {
         if (!PermissionHelper::canManageUsers()) {
@@ -123,7 +162,6 @@ class AdminController extends Controller
             'status' => $request->status
         ];
 
-        // Nếu có nhập mật khẩu mới thì cập nhật
         if ($request->filled('password')) {
             $request->validate(['password' => 'min:6']);
             $data['password'] = $request->password;
@@ -135,7 +173,6 @@ class AdminController extends Controller
             ->with('success', 'Cập nhật người dùng thành công!');
     }
 
-    // Xóa admin
     public function destroy($id)
     {
         if (!PermissionHelper::canManageUsers()) {
@@ -144,13 +181,11 @@ class AdminController extends Controller
         
         $admin = Admin::findOrFail($id);
         
-        // Không cho xóa chính mình
         if ($admin->id == session('user_id')) {
             return redirect()->route('admins.index')
                 ->with('error', 'Bạn không thể xóa tài khoản của chính mình!');
         }
         
-        // Không cho xóa Admin khác
         if ($admin->role_id == 0) {
             return redirect()->route('admins.index')
                 ->with('error', 'Bạn không thể xóa tài khoản Admin!');

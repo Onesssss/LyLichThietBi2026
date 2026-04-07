@@ -17,13 +17,32 @@ class PasswordResetRequest extends Model
         'processed_by'
     ];
     
-    protected $casts = [
-        'requested_at' => 'datetime',
-        'processed_at' => 'datetime',
-    ];
-    // Quan hệ với Admin (người xử lý)
+    public $timestamps = false;
+    
+    // Quan hệ với Admin đã xử lý
     public function processor()
     {
         return $this->belongsTo(Admin::class, 'processed_by');
+    }
+    
+
+    public function scopePending($query)
+    {
+        return $query->where('status', 0);
+    }
+    
+
+    public function scopeProcessed($query)
+    {
+        return $query->where('status', 1);
+    }
+
+    public function isExpired()
+    {
+        if ($this->status == 1 && $this->processed_at) {
+            $expireTime = strtotime($this->processed_at) + 120; 
+            return time() > $expireTime;
+        }
+        return false;
     }
 }

@@ -12,7 +12,7 @@ class Point extends Model
         'name', 'code', 'department_id', 'order', 'status'
     ];
     
-    // Quan hệ: Thuộc về một Department (Cung)
+  
     public function department()
     {
         return $this->belongsTo(Department::class, 'department_id');
@@ -24,9 +24,14 @@ class Point extends Model
         return $this->hasOneThrough(Branch::class, Department::class, 
             'id', 'id', 'department_id', 'branch_id');
     }
-        // Quan hệ: Có nhiều EquipmentList
+   
     public function equipmentLists()
     {
         return $this->hasMany(EquipmentList::class, 'point_id');
+    }
+
+        public function equipmentItems()
+    {
+        return $this->hasMany(EquipmentItem::class, 'point_id');
     }
     }

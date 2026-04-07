@@ -94,7 +94,6 @@
     updateDateTime();
     setInterval(updateDateTime, 60000);
 
-          // ==================== RESPONSIVE SIDEBAR ====================
         const sidebar = document.getElementById('sidebar');
         const sidebarToggle = document.getElementById('sidebarToggle');
         const sidebarOverlay = document.getElementById('sidebarOverlay');

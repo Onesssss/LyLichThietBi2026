@@ -8,12 +8,10 @@ use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
-    /**
-     * Hiển thị trang chủ dashboard
-     */
+   
     public function index()
     {
-        // 🔥 Lấy thông tin user từ session
+        
         $user = [
             'id' => session('user_id'),
             'username' => session('username'),
@@ -24,12 +22,12 @@ class HomeController extends Controller
             'full_name' => session('full_name') ?? session('username')
         ];
 
-        // 🔥 Kiểm tra đăng nhập
+  
         if (!$user['id']) {
             return redirect()->route('login');
         }
 
-        // 🔥 Lấy thêm thông tin từ database (last_login)
+    
         $userInfo = Admin::find($user['id']);
         $lastLogin = $userInfo ? $userInfo->last_login : null;
 

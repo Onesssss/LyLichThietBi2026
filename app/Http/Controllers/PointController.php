@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 
 class PointController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         if (!PermissionHelper::canManagePoints()) {
             abort(403, 'Bạn không có quyền truy cập');
@@ -17,9 +17,32 @@ class PointController extends Controller
         
         $query = Point::with(['department.branch']);
         $query = PermissionHelper::filterPoint($query);
-        $points = $query->orderBy('id', 'desc')->get();
         
-        return view('points.index', compact('points'));
+  
+        $departments = Department::with('branch')->orderBy('name')->get();
+        
+
+        if ($request->filled('name')) {
+            $query->where('name', 'like', '%' . $request->name . '%');
+        }
+        
+        if ($request->filled('department_id')) {
+            $query->where('department_id', $request->department_id);
+        }
+        
+   
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+ 
+        $sortBy = $request->get('sort_by', 'id');
+        $sortOrder = $request->get('sort_order', 'desc');
+        $query->orderBy($sortBy, $sortOrder);
+        
+
+        $points = $query->paginate(15)->appends($request->query());
+        
+        return view('points.index', compact('points', 'departments'));
     }
 
     public function create()
